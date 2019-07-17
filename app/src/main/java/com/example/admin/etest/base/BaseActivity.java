@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 import dagger.android.DaggerActivity;
 import dagger.android.support.DaggerAppCompatActivity;
@@ -28,7 +29,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends DaggerAppC
         super.onCreate(savedInstanceState);
 
         viewDataBinding = DataBindingUtil.setContentView(this, getLayoutRes());
-
+        ButterKnife.bind(this);
         initView();
 
         initData();

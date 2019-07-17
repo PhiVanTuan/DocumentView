@@ -16,7 +16,6 @@ public class DocumentApplication extends DaggerApplication {
 
     }
 
-
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
         AppComponent component = DaggerAppComponent.builder().application(this).build();

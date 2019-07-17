@@ -17,40 +17,45 @@ import java.util.List;
 public class ListFileViewModel extends BaseViewModel {
 
 
-   public MutableLiveData<List<Office>> getListFile(File file,Home home){
-       MutableLiveData<List<Office>> liveData=new MutableLiveData<>();
-       List<Office> lstOffice=new ArrayList<>();
-       loadFile(file,home,lstOffice);
-       liveData.setValue(lstOffice);
-       return liveData;
-   }
+    public MutableLiveData<List<Office>> getListFile(File file, Home home) {
+        MutableLiveData<List<Office>> liveData = new MutableLiveData<>();
+        List<Office> lstOffice = new ArrayList<>();
+        loadFile(file, home, lstOffice);
+        liveData.setValue(lstOffice);
+        return liveData;
+    }
 
-    private void loadFile(File file,Home home,List<Office> lstOffice){
+    private void loadFile(File file, Home home, List<Office> lstOffice) {
 
         for (File inFile : file.listFiles()) {
-            if (inFile.isDirectory()) {
-                loadFile(inFile, home, lstOffice);
-            }
-            if (inFile.isFile() && isEndWith(inFile,home)) {
-                Office office=new Office();
-                office.setPath(inFile.getAbsolutePath());
-                lstOffice.add(office);
+            try {
+                if (inFile.isDirectory()) {
+                    loadFile(inFile, home, lstOffice);
+                }
+                if (inFile.isFile() && isEndWith(inFile, home)) {
+                    Office office = new Office();
+                    office.setPath(inFile.getAbsolutePath());
+                    lstOffice.add(office);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
+
     }
 
-    private boolean isEndWith(File file, Home home){
-         List<String> lstExtension=home.getExtension();
-         for (int i=0;i<lstExtension.size();i++){
-             if (file.getAbsolutePath().endsWith(lstExtension.get(i))){
-                 return true;
-             }
-         }
-         return false;
+    private boolean isEndWith(File file, Home home) {
+        List<String> lstExtension = home.getExtension();
+        for (int i = 0; i < lstExtension.size(); i++) {
+            if (file.getAbsolutePath().endsWith(lstExtension.get(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void onItemClick(Office office, DocumentDatabase database){
+    public void onItemClick(Office office, DocumentDatabase database) {
 
     }
 }

@@ -14,10 +14,7 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-ext {
 
-    archRoomVersion = "2.0.0"
-}
 allprojects {
     repositories {
         google()

@@ -6,10 +6,13 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
+import android.support.annotation.BinderThread;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.admin.etest.R;
 import com.example.admin.etest.adapter.FileAdapter;
@@ -36,6 +39,9 @@ public class ListFileActivity extends BaseActivity implements BaseRecycleAdapter
     @BindView(R.id.rcView)
     RecyclerView rcView;
 
+    @BindView(R.id.progress)
+    ProgressBar progressBar;
+
     @Override
     protected int getLayoutRes() {
         return R.layout.layout_list;
@@ -45,9 +51,11 @@ public class ListFileActivity extends BaseActivity implements BaseRecycleAdapter
     protected void initData() {
 
         viewModel=ViewModelProviders.of(this).get(ListFileViewModel.class);
-        viewModel.getListFile(new File(Environment.getExternalStorageDirectory().toString()),home).observe(this, new Observer<List<Office>>() {
+
+        viewModel.getListFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath()),home).observe(this, new Observer<List<Office>>() {
             @Override
             public void onChanged(@Nullable List<Office> offices) {
+                progressBar.setVisibility(View.GONE);
                 adapter.loadData(offices);
             }
         });
@@ -56,6 +64,7 @@ public class ListFileActivity extends BaseActivity implements BaseRecycleAdapter
 
     @Override
     protected void initView() {
+        progressBar.setVisibility(View.VISIBLE);
         home= (Home) getIntent().getSerializableExtra("home");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("View "+home.getName().toUpperCase());

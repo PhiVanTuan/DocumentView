@@ -49,6 +49,7 @@ public class HomeFragment extends BaseFragment implements BaseRecycleAdapter.Ite
     protected void initData() {
         rcView.setLayoutManager(new GridLayoutManager(getContext(),2));
         rcView.setAdapter(adapter);
+        adapter.setItemClickListener(this);
         adapter.loadData(lstHome);
     }
 
