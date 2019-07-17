@@ -3,8 +3,7 @@ package com.example.admin.etest;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+
 import android.util.Log;
 
 import com.example.admin.etest.adapter.DocumentPagerAdapter;

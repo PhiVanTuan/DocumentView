@@ -16,8 +16,8 @@ public interface RecentDao {
     @Query("Select *from recent order by time desc limit 20")
     LiveData<List<Office>> getRecent();
 
-    @Insert
-    void insert(Office office);
+//    @Insert
+//    void insert(Office office);
 
     @Update
     void update(Office office);

@@ -9,9 +9,10 @@ import com.example.admin.etest.R;
 import com.example.admin.etest.adapter.HomeAdapter;
 import com.example.admin.etest.base.BaseFragment;
 import com.example.admin.etest.base.BaseRecycleAdapter;
-import com.example.admin.etest.databinding.LayoutListBinding;
+
 
 import com.example.admin.etest.model.Home;
+import com.example.admin.etest.view.activity.ListFileActivity;
 
 import java.util.List;
 
@@ -53,6 +54,6 @@ public class HomeFragment extends BaseFragment implements BaseRecycleAdapter.Ite
 
     @Override
     public void onItemClick(int position) {
-        adapter.getItem(position);
+        ListFileActivity.startListFile(getContext(),adapter.getItem(position));
     }
 }

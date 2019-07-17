@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +16,11 @@ import com.example.admin.etest.adapter.FileAdapter;
 import com.example.admin.etest.base.BaseActivity;
 import com.example.admin.etest.base.BaseRecycleAdapter;
 import com.example.admin.etest.model.Home;
+import com.example.admin.etest.model.Office;
 import com.example.admin.etest.viewmodel.ListFileViewModel;
+
+import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -40,6 +45,12 @@ public class ListFileActivity extends BaseActivity implements BaseRecycleAdapter
     protected void initData() {
 
         viewModel=ViewModelProviders.of(this).get(ListFileViewModel.class);
+        viewModel.getListFile(new File(Environment.getExternalStorageDirectory().toString()),home).observe(this, new Observer<List<Office>>() {
+            @Override
+            public void onChanged(@Nullable List<Office> offices) {
+                adapter.loadData(offices);
+            }
+        });
 
     }
 

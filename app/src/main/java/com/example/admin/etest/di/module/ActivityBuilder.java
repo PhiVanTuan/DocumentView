@@ -2,6 +2,7 @@ package com.example.admin.etest.di.module;
 
 
 import com.example.admin.etest.MainActivity;
+import com.example.admin.etest.view.activity.ListFileActivity;
 import com.example.admin.etest.view.fragment.HomeFragment;
 import com.example.admin.etest.view.fragment.RecentFragment;
 
@@ -18,7 +19,10 @@ public abstract class ActivityBuilder {
     @ContributesAndroidInjector(modules = {HomeFragmentModule.class})
     abstract HomeFragment bindHomeFragment();
 
-    @ContributesAndroidInjector(modules = {HomeFragmentModule.class})
+    @ContributesAndroidInjector(modules = {RecentFragmentModule.class})
     abstract RecentFragment bindRecentFragment();
+
+    @ContributesAndroidInjector(modules = {ListFileActivityModule.class})
+    abstract ListFileActivity bindListFileActivity();
 
 }
