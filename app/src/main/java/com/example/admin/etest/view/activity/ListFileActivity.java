@@ -18,6 +18,7 @@ import com.example.admin.etest.R;
 import com.example.admin.etest.adapter.FileAdapter;
 import com.example.admin.etest.base.BaseActivity;
 import com.example.admin.etest.base.BaseRecycleAdapter;
+import com.example.admin.etest.db.DocumentDatabase;
 import com.example.admin.etest.model.Home;
 import com.example.admin.etest.model.Office;
 import com.example.admin.etest.viewmodel.ListFileViewModel;
@@ -33,6 +34,9 @@ import butterknife.BindView;
 public class ListFileActivity extends BaseActivity implements BaseRecycleAdapter.ItemClickListener {
     @Inject
     FileAdapter adapter;
+
+    @Inject
+    DocumentDatabase database;
     private Home home;
     private ListFileViewModel viewModel;
 
@@ -71,6 +75,7 @@ public class ListFileActivity extends BaseActivity implements BaseRecycleAdapter
         rcView.setLayoutManager(new LinearLayoutManager(this));
         rcView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
         rcView.setAdapter(adapter);
+        adapter.setItemClickListener(this);
     }
 
     public static void startListFile(Context context, Home home) {
@@ -81,6 +86,6 @@ public class ListFileActivity extends BaseActivity implements BaseRecycleAdapter
 
     @Override
     public void onItemClick(int position) {
-
+        viewModel.onItemClick(adapter.getItem(position),database);
     }
 }

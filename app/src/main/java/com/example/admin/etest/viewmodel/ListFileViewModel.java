@@ -14,6 +14,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
 public class ListFileViewModel extends BaseViewModel {
 
 
@@ -55,7 +60,20 @@ public class ListFileViewModel extends BaseViewModel {
         return false;
     }
 
-    public void onItemClick(Office office, DocumentDatabase database) {
+    public void onItemClick(final Office office, DocumentDatabase database) {
+        final Office check = database.getRecentDao().checkRecent(office.getPath()).getValue();it
+        Observable.just(database).subscribeOn(Schedulers.io()).subscribe(new Consumer<DocumentDatabase>() {
+            @Override
+            public void accept(DocumentDatabase database) throws Exception {
+                if (check != null) {
+                    check.setTime(System.currentTimeMillis());
+                    database.getRecentDao().update(check);
+                } else {
+                    office.setTime(System.currentTimeMillis());
+                    database.getRecentDao().insert(office);
+                }
+            }
+        });
 
     }
 }
