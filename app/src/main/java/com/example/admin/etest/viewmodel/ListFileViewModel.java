@@ -14,28 +14,33 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class ListFileViewModel extends BaseViewModel {
 
-
-    public MutableLiveData<List<Office>> getListFile(File file, Home home) {
-        MutableLiveData<List<Office>> liveData = new MutableLiveData<>();
-        List<Office> lstOffice = new ArrayList<>();
-        loadFile(file, home, lstOffice);
-        liveData.setValue(lstOffice);
-        return liveData;
+    public Observable<List<Office>> getLstFile(File file, Home home) {
+        Observable<List<Office>> observable=Observable.just(file).map(file1 -> getListFile(file,home)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        return observable;
     }
 
-    private void loadFile(File file, Home home, List<Office> lstOffice) {
-
+    private List<Office> getListFile(File file, Home home) {
+        List<Office> lstOffice = new ArrayList<>();
         for (File inFile : file.listFiles()) {
             try {
                 if (inFile.isDirectory()) {
-                    loadFile(inFile, home, lstOffice);
+                    List<Office> lstDirectory = getListFile(inFile, home);
+                    if (lstDirectory != null && lstDirectory.size() > 0) {
+                        lstOffice.addAll(lstDirectory);
+                    }
+
                 }
                 if (inFile.isFile() && isEndWith(inFile, home)) {
                     Office office = new Office();
@@ -46,8 +51,7 @@ public class ListFileViewModel extends BaseViewModel {
                 e.printStackTrace();
             }
         }
-
-
+        return lstOffice;
     }
 
     private boolean isEndWith(File file, Home home) {
@@ -60,20 +64,22 @@ public class ListFileViewModel extends BaseViewModel {
         return false;
     }
 
-    public void onItemClick(final Office office, DocumentDatabase database) {
-        final Office check = database.getRecentDao().checkRecent(office.getPath()).getValue();it
-        Observable.just(database).subscribeOn(Schedulers.io()).subscribe(new Consumer<DocumentDatabase>() {
-            @Override
-            public void accept(DocumentDatabase database) throws Exception {
-                if (check != null) {
-                    check.setTime(System.currentTimeMillis());
-                    database.getRecentDao().update(check);
-                } else {
-                    office.setTime(System.currentTimeMillis());
-                    database.getRecentDao().insert(office);
-                }
-            }
-        });
+    public void onItemClick(final Office office, final DocumentDatabase database) {
+        final Office check = database.getRecentDao().checkRecent(office.getPath()).getValue();
+        if (check != null) {
+            check.setTime(System.currentTimeMillis());
+            Completable.fromAction(() -> database.getRecentDao()
+                    .update(check))
+                    .subscribeOn(Schedulers.io())
+                    .subscribe();
+        } else {
+            office.setTime(System.currentTimeMillis());
+            Completable.fromAction(() -> database.getRecentDao()
+                    .insert(office))
+                    .subscribeOn(Schedulers.io())
+                    .subscribe();
+        }
 
     }
+
 }

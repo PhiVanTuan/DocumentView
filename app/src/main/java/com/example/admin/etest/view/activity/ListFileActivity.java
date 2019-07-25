@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -29,6 +30,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import io.reactivex.functions.Consumer;
 
 
 public class ListFileActivity extends BaseActivity implements BaseRecycleAdapter.ItemClickListener {
@@ -55,17 +57,19 @@ public class ListFileActivity extends BaseActivity implements BaseRecycleAdapter
     protected void initData() {
 
         viewModel=ViewModelProviders.of(this).get(ListFileViewModel.class);
+        viewModel.getLstFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath()),home).subscribe(offices ->loadData(offices) ,throwable ->onError(throwable) );
 
-        viewModel.getListFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath()),home).observe(this, new Observer<List<Office>>() {
-            @Override
-            public void onChanged(@Nullable List<Office> offices) {
-                progressBar.setVisibility(View.GONE);
-                adapter.loadData(offices);
-            }
-        });
 
     }
 
+    private void loadData(List<Office> offices){
+        progressBar.setVisibility(View.GONE);
+        adapter.loadData(offices);
+    }
+
+    private void onError(Throwable throwable){
+        Log.e("error",throwable.getMessage());
+    }
     @Override
     protected void initView() {
         progressBar.setVisibility(View.VISIBLE);

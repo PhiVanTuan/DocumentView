@@ -20,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -67,23 +68,16 @@ public class RecentFragment extends BaseFragment implements BaseRecycleAdapter.I
         final Office office=adapter.getItem(position);
         if (office!=null&&new File(office.getPath()).exists()){
             office.setTime(System.currentTimeMillis());
-            database.getRecentDao().update(office).;
+            Completable.fromAction(() -> database.getRecentDao()
+                    .update(office))
+                    .subscribeOn(Schedulers.io())
+                    .subscribe();
         }else {
-            database.getRecentDao().delete(office);
+            Completable.fromAction(() -> database.getRecentDao()
+                    .delete(office))
+                    .subscribeOn(Schedulers.io())
+                    .subscribe();
         }
-        Observable.just(database).subscribeOn(Schedulers.io()).subscribe(new Consumer<DocumentDatabase>() {
-            @Override
-            public void accept(DocumentDatabase database) throws Exception {
-                if (office!=null&&new File(office.getPath()).exists()){
-                    office.setTime(System.currentTimeMillis());
-                    database.getRecentDao().update(office);
-                }else {
-                    database.getRecentDao().delete(office);
-                }
-            }
-        });
-
-
 
     }
 }
