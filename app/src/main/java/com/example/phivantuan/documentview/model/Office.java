@@ -78,7 +78,7 @@ public class Office implements Serializable  {
 
     public String getLastTimeOpen(){
         if (time!=0){
-            String dateString = new SimpleDateFormat("hh:mm MM/dd/yyyy").format(new Date(time));
+            String dateString = new SimpleDateFormat("HH:mm MM/dd/yyyy").format(new Date(time));
             return dateString;
         }
         return null;

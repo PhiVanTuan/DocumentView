@@ -2,12 +2,14 @@ package com.example.phivantuan.documentview;
 
 import android.arch.lifecycle.Observer;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.example.phivantuan.documentview.adapter.DocumentPagerAdapter;
 import com.example.phivantuan.documentview.base.BaseInjectActivity;
@@ -22,7 +24,7 @@ import javax.inject.Inject;
 
 public class MainActivity extends BaseInjectActivity<ActivityMainBinding> {
 
-    private static final int REQUEST_STORAGE_CODE=212;
+    private static final int REQUEST_STORAGE_CODE = 212;
 
     @Inject
     DocumentPagerAdapter adapter;
@@ -41,17 +43,10 @@ public class MainActivity extends BaseInjectActivity<ActivityMainBinding> {
     @Override
     protected void initData() {
 
-      database.getRecentDao().getAll().observe(this, new Observer<List<Office>>() {
-          @Override
-          public void onChanged(@Nullable List<Office> offices) {
-              int size=offices.size();
-              size++;
-          }
-      });
-
     }
+
     private boolean checkPermission() {
-        if (ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") == PackageManager.PERMISSION_GRANTED ) {
+        if (ContextCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE") == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
         return false;
@@ -61,22 +56,31 @@ public class MainActivity extends BaseInjectActivity<ActivityMainBinding> {
     protected void initView() {
         initPermission();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode==REQUEST_STORAGE_CODE){
-             initPermission();
+        if (requestCode == REQUEST_STORAGE_CODE) {
+            initPermission();
         }
     }
 
-    private void initPermission(){
-        if (checkPermission() ) {
+    @Override
+    protected void onResume() {
+          if (checkPermission()&&!qbsdk.isInstalling()){
+              qbsdk.install();
+          }
+        super.onResume();
+    }
+
+    private void initPermission() {
+        if (checkPermission()) {
             getViewDataBinding().pagerInfo.setAdapter(adapter);
             getViewDataBinding().tabLayoutInfo.setupWithViewPager(getViewDataBinding().pagerInfo);
             getViewDataBinding().pagerInfo.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(getViewDataBinding().tabLayoutInfo));
             qbsdk.install();
-        }else {
-            ActivityCompat.requestPermissions(this,new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"},REQUEST_STORAGE_CODE);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"}, REQUEST_STORAGE_CODE);
         }
     }
 }

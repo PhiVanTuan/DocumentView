@@ -13,19 +13,28 @@ import android.widget.Toast;
 import com.tencent.smtt.sdk.QbSdk;
 import com.tencent.smtt.sdk.TbsListener;
 
+
 /**
  * Created by Phi Van Tuan on 30/07/2019
  */
 
-public class InstallQbsdk implements TbsListener {
-    /* access modifiers changed from: private */
-    public Context context;
+public class InstallQbsdk {
+    private Context context;
     private boolean isInstalling = false;
-    /* access modifiers changed from: private */
-    public ProgressDialog pd;
+
+    private Dialog dialog;
+
+    private ProgressDialog pd;
 
     public InstallQbsdk(Context context2) {
         this.context = context2;
+        dialog = new AlertDialog.Builder(context2).setCancelable(false).setMessage("Please set up network connection to install microsoft office sdk").setTitle("No internet connection").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent("android.settings.WIFI_SETTINGS");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context2.startActivity(intent);
+            }
+        }).create();
     }
 
     public boolean isInstalling() {
@@ -35,7 +44,7 @@ public class InstallQbsdk implements TbsListener {
     public void install() {
         if (QbSdk.getTbsVersion(this.context) == 0) {
             if (!isNetworkConnected()) {
-                showAlertDialog(this.context);
+                showAlertDialog();
                 this.isInstalling = false;
             } else {
                 this.pd = new ProgressDialog(this.context);
@@ -53,7 +62,12 @@ public class InstallQbsdk implements TbsListener {
             QbSdk.reset(this.context);
             QbSdk.setTbsListener(new TbsListener() {
                 public void onDownloadFinish(int i) {
+
                     Log.e("Qbsdk", "onDownloadFinish " + i);
+//                    pd.setProgress(100);
+//                    pd.setIndeterminate(true);
+//                    pd.setMessage("Installing");
+
                 }
 
                 public void onInstallFinish(int i) {
@@ -83,33 +97,16 @@ public class InstallQbsdk implements TbsListener {
     }
 
     private boolean isNetworkConnected() {
-        return ((ConnectivityManager) this.context.getSystemService("connectivity")).getActiveNetworkInfo() != null;
+        return ((ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo() != null;
     }
 
-    public void showAlertDialog(final Context context2) {
-        Dialog dialog = new AlertDialog.Builder(context2).setCancelable(false).setMessage("Please set up network connection to install microsoft office sdk").setTitle("No internet connection").setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent("android.settings.WIFI_SETTINGS");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context2.startActivity(intent);
+    public void showAlertDialog() {
+        if (dialog != null) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
             }
-        }).create();
-        dialog.getWindow().setType(2003);
-        dialog.show();
+            dialog.show();
+        }
     }
 
-    public void onDownloadFinish(int i) {
-        Log.e("Qbsdk", "onDownloadFinish " + i);
-    }
-
-    public void onInstallFinish(int i) {
-        Log.e("Qbsdk", "onInstallFinish " + i);
-        Toast.makeText(this.context, "Instal succesful", 0).show();
-        this.pd.dismiss();
-    }
-
-    public void onDownloadProgress(int i) {
-        Log.e("Qbsdk", "onDownloadProgress " + i);
-        this.pd.setProgress(i);
-    }
 }
