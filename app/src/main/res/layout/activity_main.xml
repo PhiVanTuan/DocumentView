@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         tools:ignore="MissingConstraints"
         android:layout_height="match_parent"
-        tools:context="com.example.admin.etest.MainActivity">
+        tools:context="com.example.phivantuan.documentview.MainActivity">
 
         <android.support.design.widget.TabLayout
 
