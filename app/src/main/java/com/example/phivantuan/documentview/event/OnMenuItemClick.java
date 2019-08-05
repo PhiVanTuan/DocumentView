@@ -5,7 +5,6 @@ import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 
 import com.example.phivantuan.documentview.R;
-import com.example.phivantuan.documentview.di.component.DaggerAppComponent;
 import com.example.phivantuan.documentview.model.Office;
 
 import javax.inject.Inject;
@@ -15,7 +14,11 @@ import javax.inject.Inject;
  */
 
 public class OnMenuItemClick implements PopupMenu.OnMenuItemClickListener {
-    @Inject ItemClick mItemClick;
+    private ItemClick mItemClick;
+
+    public OnMenuItemClick(ItemClick mItemClick) {
+        this.mItemClick = mItemClick;
+    }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {

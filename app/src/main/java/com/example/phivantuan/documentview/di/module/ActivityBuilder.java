@@ -2,6 +2,7 @@ package com.example.phivantuan.documentview.di.module;
 
 
 import com.example.phivantuan.documentview.MainActivity;
+import com.example.phivantuan.documentview.adapter.FileAdapter;
 import com.example.phivantuan.documentview.view.activity.ListFileActivity;
 import com.example.phivantuan.documentview.view.fragment.HomeFragment;
 import com.example.phivantuan.documentview.view.fragment.RecentFragment;
@@ -24,5 +25,7 @@ public abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = {ListFileActivityModule.class})
     abstract ListFileActivity bindListFileActivity();
+
+
 
 }

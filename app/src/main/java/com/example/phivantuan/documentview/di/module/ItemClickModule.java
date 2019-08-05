@@ -5,7 +5,10 @@ import android.content.Context;
 import com.example.phivantuan.documentview.base.BaseViewHolder;
 import com.example.phivantuan.documentview.di.scope.ItemClickInfo;
 import com.example.phivantuan.documentview.event.ItemClick;
+import com.example.phivantuan.documentview.event.OnMenuItemClick;
 import com.example.phivantuan.documentview.model.Office;
+
+import javax.inject.Inject;
 
 import dagger.Module;
 import dagger.Provides;
@@ -15,6 +18,17 @@ import dagger.Provides;
  */
 @Module
 public class ItemClickModule {
+    private BaseViewHolder viewHolder;
+
+//    public ItemClickModule(BaseViewHolder viewHolder) {
+//        this.viewHolder = viewHolder;
+//    }
+//
+//    @Provides
+//    @ItemClickInfo
+//    BaseViewHolder provideViewHolder(){
+//        return viewHolder;
+//    }
 
     @Provides
     @ItemClickInfo
@@ -23,12 +37,19 @@ public class ItemClickModule {
     }
 
     @Provides
+    @ItemClickInfo
     Context provideContext(BaseViewHolder viewHolder) {
         return viewHolder.itemView.getContext();
     }
 
     @Provides
-    ItemClick provideItemClick(@ItemClickInfo Office office, Context context) {
+    @Inject
+    ItemClick provideItemClick(@ItemClickInfo  Context context,@ItemClickInfo Office office) {
         return new ItemClick(context, office);
+    }
+
+    @Provides
+    OnMenuItemClick provideOnMenuClick(ItemClick itemClick){
+        return new OnMenuItemClick(itemClick);
     }
 }

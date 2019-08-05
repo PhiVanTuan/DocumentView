@@ -5,8 +5,12 @@ import android.view.View;
 
 import com.example.phivantuan.documentview.base.BaseViewHolder;
 import com.example.phivantuan.documentview.di.module.ItemClickModule;
+import com.example.phivantuan.documentview.di.scope.ItemClickInfo;
+import com.example.phivantuan.documentview.event.ItemClick;
+import com.example.phivantuan.documentview.event.OnMenuItemClick;
 import com.example.phivantuan.documentview.model.Office;
 
+import dagger.BindsInstance;
 import dagger.Component;
 
 /**
@@ -16,5 +20,19 @@ import dagger.Component;
 public interface ItemClickComponent {
     void inject(BaseViewHolder viewHolder);
 
-    Office provideOffice();
+    OnMenuItemClick provideOnMenuClick();
+
+
+    @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        Builder withOffice(Office office);
+
+        @BindsInstance
+        Builder withViewHolder(BaseViewHolder viewHolder);
+
+        ItemClickComponent build();
+
+    }
 }

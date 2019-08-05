@@ -40,11 +40,11 @@ public class FileAdapter extends BaseRecycleAdapter<Office, FileAdapter.ViewHold
         @Override
         public void bindView(int position) {
             Office office=lstItems.get(position);
-            ItemClickComponent component=DaggerItemClickComponent.builder().build();
+            final ItemClickComponent component=DaggerItemClickComponent.builder().withOffice(office).withViewHolder(this).build();
 
             component.inject(this);
-            component.provideOffice();
-//            DaggerItemClickComponent.builder().build().inject(office,itemView.getContext());
+
+
             if(office!=null){
                 imgFile.setImageResource(office.getIconFile());
                 tvName.setText(office.getName());
@@ -59,7 +59,8 @@ public class FileAdapter extends BaseRecycleAdapter<Office, FileAdapter.ViewHold
                     public void onClick(View view) {
                         PopupMenu popupMenu=new PopupMenu(itemView.getContext(),imgMore);
                         popupMenu.getMenuInflater().inflate(R.menu.menu_item_file,popupMenu.getMenu());
-                        popupMenu.setOnMenuItemClickListener(new OnMenuItemClick());
+                        popupMenu.setOnMenuItemClickListener(component.provideOnMenuClick());
+                        popupMenu.show();
                     }
                 });
             }
